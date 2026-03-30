@@ -1,0 +1,23 @@
+.progressTrack {
+  width: 100%;
+  height: 10px;
+  background-color: #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.4s ease-in-out;
+}
+
+.custom-css li {
+  border-color: #e5e7eb;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.custom-css li:hover {
+  border-color: var(--moodcolour);
+}
