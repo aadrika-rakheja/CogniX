@@ -1,0 +1,18 @@
+.btns button{
+    background-color: rgb(238, 238, 238);
+    border-radius: 8px;
+    padding: 8px 10px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.btns button:hover{
+    
+    background-color: color-mix(in srgb, var(--moodcolour) 15%, white);
+    color: var(--moodcolour);
+    
+    transform: translateY(-2px);
+}
