@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { askTutor } = require("../controller/aiController");
+const { askTutor } = require("../controllers/aiController");
 
 router.post("/", askTutor);
 

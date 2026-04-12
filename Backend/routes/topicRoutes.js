@@ -1,5 +1,5 @@
 const express=require("express");
-const {createTopic,getAllTopicsBySubj,getTopics, getTopicsById,deleteTopic}=require("../controller/topicController");
+const {createTopic,getAllTopicsBySubj,getTopics, getTopicsById,deleteTopic}=require("../controllers/topicController");
 const router=express.Router();
 
 router.post("/createTopic",createTopic);

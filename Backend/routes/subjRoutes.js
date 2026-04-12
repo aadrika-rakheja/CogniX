@@ -1,7 +1,7 @@
 const express=require("express");
 const routes=express.Router();
 
-const {createSubject, getAllSubjects,deleteSubject,findByIDSubject}=require("../controller/subjectController");
+const {createSubject, getAllSubjects,deleteSubject,findByIDSubject}=require("../controllers/subjectController");
 
 routes.get("/getAllSubjects",getAllSubjects);
 routes.post("/createSubject",createSubject);
