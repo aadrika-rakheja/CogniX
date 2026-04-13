@@ -31,6 +31,7 @@ const signupUser = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Internal Server Error",
+      msg:error.message
     });
   }
 };
@@ -71,6 +72,7 @@ const loginUser = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server Error",
+      msg:error.message
     });
   }
 };

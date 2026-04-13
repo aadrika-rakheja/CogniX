@@ -2,17 +2,13 @@ const UserProgress=require('../models/UserProgress');
 const Subjects=require('../models/Subjects');
 const Topics=require('../models/Topics');
 
-const initializeUserProgress=async(req,res)=>{
+const initializeUserProgress=async(userId)=>{
     try{
-        // const userId=req.user.id;
-        const userId="69c9ff425d7de4f98ee545aa";
+        
         const findUser=await UserProgress.findOne({userId});
         if(findUser)
         {
-            return res.status(200).json({
-                status:"User Progress found successfully",
-                data:findUser
-            });
+            return findUser;
         }
 
         const subj=await Subjects.find().sort({subjName: 1});
@@ -46,19 +42,12 @@ const initializeUserProgress=async(req,res)=>{
             courseProgress:courseProgressData
         });
 
-        return res.status(201).json({
-            success:true,
-            msg:"User Progress initialized",
-            data:progress
-        });
+        return progress;
 
     }
     catch(err)
     {
-        res.status(400).json({
-            success:false,
-            error:err.message
-        })
+         throw new Error(err.message); 
     }
 }
 
@@ -166,17 +155,21 @@ const syncUserProgress = async (progress) => {
 
 const getUserProgress=async(req,res)=>{
     try{
-        // const userId=req.user.id;
-        const userId="69c9ff425d7de4f98ee545aa";
+         const userId=req.user.id;
+         
+        //const userId="69c9ff425d7de4f98ee545aa";
 
-        const progress=await UserProgress.findOne({userId})
+        let progress=await UserProgress.findOne({userId})
                         .populate("courseProgress.course_id")
                         .populate("courseProgress.topicProgress.topic_id");
 
         
         if(!progress)
         {
-            progress =await initializeUserProgress();
+            progress =await initializeUserProgress(userId);
+            progress = await UserProgress.findOne({ userId })
+                .populate("courseProgress.course_id")
+                .populate("courseProgress.topicProgress.topic_id");
         }
 
        
@@ -236,20 +229,21 @@ const getUserProgress=async(req,res)=>{
     }
     catch(err)
     {
+        
         res.status(400).json({
             success:false,
             error:err.message
         })
+
     }
 }
 
 
 const updateUserProgress=async(req,res)=>{
     try{
-        // const userId=req.user.id;
-        const userId="69c9ff425d7de4f98ee545aa";
+        const userId=req.user.id;
 
-        const progress=await UserProgress.findOne({userId});
+        let progress=await UserProgress.findOne({userId});
         const { course_id, topic_id , watchedTime, completed}=req.body;
         
 
@@ -331,4 +325,4 @@ const updateUserProgress=async(req,res)=>{
     }
 }
 
-module.exports={initializeUserProgress,getUserProgress,updateUserProgress};
+module.exports={getUserProgress,updateUserProgress};

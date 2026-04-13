@@ -1,19 +1,42 @@
-const Questions = require("../models/Questions");
+const Question = require("../models/Questions");
 
-// ✅ ADD QUESTION (ADMIN)
+// ✅ GET QUESTIONS BY TOPIC
+const getQuestionsByTopic = async (req, res) => {
+  try {
+    const { topic } = req.params;
+
+    if (!topic) {
+      return res.status(400).json({
+        success: false,
+        message: "Topic is required",
+      });
+    }
+
+    const questions = await Question.find({
+      topic: topic.trim().toLowerCase(), // ✅ FIXED
+    });
+
+    return res.status(200).json({
+      success: true,
+      questions,
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching questions",
+    });
+  }
+};
+
+// (keep your addQuestion if you use it)
 const addQuestion = async (req, res) => {
   try {
     const { topic, question, options, answer } = req.body;
 
-    if (!topic || !question || !options || !answer) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required",
-      });
-    }
-
-    const newQuestion = await Questions.create({
-      topic: topic.toLowerCase(), // ✅ normalize
+    const newQuestion = await Question.create({
+      topic: topic.trim().toLowerCase(), // ✅ FIXED
       question,
       options,
       answer,
@@ -34,34 +57,7 @@ const addQuestion = async (req, res) => {
   }
 };
 
-// ✅ GET QUESTIONS (USER)
-const getQuestionsByTopic = async (req, res) => {
-  try {
-    const { topic } = req.params;
-
-    if (!topic) {
-      return res.status(400).json({
-        success: false,
-        message: "Topic is required",
-      });
-    }
-
-    const questions = await Questions.find({
-      topic: topic.toLowerCase(), // ✅ exact match (BEST)
-    });
-
-    res.status(200).json({
-      success: true,
-      questions,
-    });
-
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      success: false,
-      message: "Error fetching questions",
-    });
-  }
+module.exports = {
+  getQuestionsByTopic,
+  addQuestion,
 };
-
-module.exports = { addQuestion, getQuestionsByTopic };

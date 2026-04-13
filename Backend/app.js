@@ -4,8 +4,6 @@ const dotenv=require("dotenv");
 dotenv.config();
 const connectDB=require("./config/db");
 connectDB();
-const connect=require("./config/userDB");
-connect();
 const app=express();
 
 app.use(cors());
@@ -23,5 +21,13 @@ app.use("/ai-tut",aiRoutes);
 
 const userProgressRoutes=require("./routes/userProgressRoutes");
 app.use("/userProgress",userProgressRoutes);
+
+const ProgressRouters=require("./routes/ProgressRoutes");
+app.use("/api/progress",ProgressRouters);
+
+app.use("/api/auth",require("./routes/authRoutes"));
+app.use("/api/games",require("./routes/GamesRouter"));
+app.use("/api/questions", require("./routes/QuestionsRoute"));
+app.use("/api/topics", require("./routes/requireTopicRoutes"));
 
 module.exports=app;

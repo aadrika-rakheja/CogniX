@@ -1,9 +1,10 @@
 const express=require("express");
-const router=express.Router();
-const {initializeUserProgress,getUserProgress,updateUserProgress}=require('../controllers/userProgressController');
+const authMiddlewear = require("../middleware/authMiddlewear");
 
-router.post("/createUserProgress",initializeUserProgress);
-router.post("/updateUserProgress",updateUserProgress);
-router.get("/",getUserProgress);
+const router=express.Router();
+const {getUserProgress,updateUserProgress}=require('../controllers/userProgressController');
+
+router.post("/updateUserProgress",authMiddlewear,updateUserProgress);
+router.get("/",authMiddlewear,getUserProgress);
 
 module.exports=router;
