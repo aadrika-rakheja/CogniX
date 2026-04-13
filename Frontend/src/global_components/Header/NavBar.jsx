@@ -10,10 +10,10 @@ function NavBar() {
   const location = useLocation()
 
   const centerButtons = [
-    { name: 'Dashboard', path: '/' },
+    { name: 'Dashboard', path: '/dashboard' },
     { name: 'AI Tutor', path: '/ai-tut' },
-    { name: 'Games', path: '/games' },
-    { name: 'Progress', path: '/progress' },
+    { name: 'Quiz', path: '/quiz' },
+    //{ name: 'Progress', path: '/progress' },
     { name: 'Admin', path: '/admin' }
   ]
 

@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme } from "../../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
 import GameCard from "./GameCard";
-import FilterBar from "../components/FilterBar";
-import StatCard from "../components/StatCard";
+import FilterBar from "./FilterBar";
+import StatCard from "./StatCard";
 
 const Dashboard = () => {
     const [games, setGames] = useState([]);
@@ -29,9 +29,9 @@ const Dashboard = () => {
                     return;
                 }
 
-                const gamesRes = await axios.get("http://localhost:8000/api/games");
+                const gamesRes = await axios.get("http://localhost:2424/api/games");
 
-                const statsRes = await axios.get("http://localhost:8000/api/progress", {
+                const statsRes = await axios.get("http://localhost:2424/api/progress", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

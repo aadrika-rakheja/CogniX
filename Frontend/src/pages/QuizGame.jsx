@@ -28,7 +28,7 @@ function QuizGame() {
         try {
             // Correct endpoint: /api/progress (not /save-process)
             await axios.post(
-                "http://localhost:8000/api/progress",
+                "http://localhost:2424/api/progress",
                 {
                     topic: title || game.title,
                     score: score,
@@ -52,11 +52,18 @@ function QuizGame() {
             <div className="min-h-screen flex items-center justify-center">
                 <div className="bg-white p-6 rounded-lg shadow text-center">
                     <h2 className="text-xl font-bold mb-3">No Questions Available</h2>
+                    <p className="text-gray-600 mb-4">Questions are being loaded or this topic has no questions yet.</p>
                     <button
                         onClick={() => navigate("/dashboard")}
-                        className="bg-indigo-600 text-white px-4 py-2 rounded"
+                        className="bg-indigo-600 text-white px-4 py-2 rounded mr-2"
                     >
-                        Back
+                        Back to Dashboard
+                    </button>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="bg-green-600 text-white px-4 py-2 rounded"
+                    >
+                        Retry
                     </button>
                 </div>
             </div>

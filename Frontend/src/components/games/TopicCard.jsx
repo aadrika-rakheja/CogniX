@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme } from "../../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
 import { Play, BookOpen } from "lucide-react";
 
@@ -16,7 +16,7 @@ function TopicCard({ topic }) {
 
         try {
             const response = await fetch(
-                `http://localhost:8000/api/questions/${topic.name}`
+                `http://localhost:2424/api/questions/${topic.name}`
             );
 
             const data = await response.json();

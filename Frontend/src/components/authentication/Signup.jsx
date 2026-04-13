@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme } from "../../context/ThemeContext";
 
 function Signup() {
    const { colour } = useTheme();
@@ -17,7 +17,7 @@ function Signup() {
 
         try 
         {
-          const res=await fetch("http://localhost:8000/api/auth/signup",
+          const res=await fetch("http://localhost:2424/api/auth/signup",
             {
             method:"POST",
             headers:
@@ -38,7 +38,7 @@ function Signup() {
             alert("Sign-Up Successful.");
           
 
-          window.location.href="/login";
+          window.location.href="/";
           }
 
         else 

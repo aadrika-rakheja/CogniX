@@ -57,7 +57,7 @@ function SubjCard({subj}) {
   if(loading)
     return <Loader/>
 
-  console.group();
+  
 
   return (
     <>

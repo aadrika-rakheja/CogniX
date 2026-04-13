@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme } from "../../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
 import { Play, Settings } from "lucide-react";
 
@@ -40,18 +40,21 @@ function GameCard({ game }) {
 
         try {
             const response = await fetch(
-                `http://localhost:8000/api/questions/${topic}`
+                `http://localhost:2424/api/questions/${topic}`
             );
 
             const data = await response.json();
 
             if (!data.success || !data.questions || data.questions.length === 0) {
-                throw new Error("No questions available for this game.");
+                setError("No questions available for this game. Please contact an administrator.");
+                setIsLoading(false);
+                return;
             }
 
             navigate("/quiz", {
                 state: {
                     questions: data.questions,
+                    topic,
                     game: game,
                     title: game.title,
                 },

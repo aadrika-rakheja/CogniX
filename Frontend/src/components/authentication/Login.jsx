@@ -3,7 +3,7 @@ import React from 'react';
 import { useState } from 'react';
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme } from "../../context/ThemeContext";
 
 function Login() {
     const navigate = useNavigate();
@@ -18,7 +18,7 @@ function Login() {
     e.preventDefault();
 
     try {
-        const res = await fetch("http://localhost:8000/api/auth/login", 
+        const res = await fetch("http://localhost:2424/api/auth/login", 
             {
             method: "POST",
             headers: 
