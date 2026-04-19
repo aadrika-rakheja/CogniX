@@ -4,6 +4,9 @@ const discussionSchema = new mongoose.Schema({
   title: String,
   description: String,
   tags: [String],
+  author: String,
+  authorEmail: String,
+  authorId: String,
 
   upvotes: {
     type: Number,
@@ -24,6 +27,8 @@ const discussionSchema = new mongoose.Schema({
       },
       text: String,
       author: String,
+      authorEmail: String,
+      authorId: String,
       parentId: {
         type: mongoose.Schema.Types.ObjectId,
         default: null, // null = top-level comment

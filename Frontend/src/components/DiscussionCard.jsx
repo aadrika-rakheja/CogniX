@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { updateDiscussion } from "../services/discussionServices";
 
+
 function DiscussionCard({ data, onDelete, onUpvote, onUpdate }) {
   if (!data) return null;
 
@@ -14,6 +15,7 @@ function DiscussionCard({ data, onDelete, onUpvote, onUpdate }) {
 
   const userId = localStorage.getItem("userId");
   const liked = data.upvotedBy?.includes(userId);
+  const isAuthor = userId && data.authorId && String(userId) === String(data.authorId);
 
   // 🔥 Edit state
   const [isEditing, setIsEditing] = useState(false);
@@ -29,6 +31,7 @@ function DiscussionCard({ data, onDelete, onUpvote, onUpdate }) {
         title: editedTitle,
         description: editedDescription,
         tags: data.tags,
+        userId: userId,
       });
 
       onUpdate(updated);
@@ -153,44 +156,48 @@ function DiscussionCard({ data, onDelete, onUpvote, onUpdate }) {
       {/* RIGHT ACTIONS */}
       <div className="flex flex-col gap-2">
 
-        {isEditing ? (
+        {isAuthor && (
           <>
-            <button
-              onClick={handleEdit}
-              className="text-green-500 text-xs hover:underline"
-            >
-              Save
-            </button>
+            {isEditing ? (
+              <>
+                <button
+                  onClick={handleEdit}
+                  className="text-green-500 text-xs hover:underline"
+                >
+                  Save
+                </button>
 
+                <button
+                  onClick={handleCancel}
+                  className="text-gray-500 text-xs hover:underline"
+                >
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsEditing(true);
+                }}
+                className="text-blue-500 text-xs hover:underline"
+              >
+                Edit
+              </button>
+            )}
+
+            {/* Delete */}
             <button
-              onClick={handleCancel}
-              className="text-gray-500 text-xs hover:underline"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }}
+              className="text-red-400 hover:text-red-600 text-xs"
             >
-              Cancel
+              Delete
             </button>
           </>
-        ) : (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsEditing(true);
-            }}
-            className="text-blue-500 text-xs hover:underline"
-          >
-            Edit
-          </button>
         )}
-
-        {/* Delete */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-          className="text-red-400 hover:text-red-600 text-xs"
-        >
-          Delete
-        </button>
 
       </div>
 

@@ -10,7 +10,8 @@ function Forum({ discussions, setDiscussions, refreshDiscussions }) {
 
   // 🔥 Delete handler (moved here)
   const handleDelete = async (id) => {
-    await deleteDiscussion(id);
+    const userId = localStorage.getItem("userId");
+    await deleteDiscussion(id, userId);
     refreshDiscussions();
   };
 
@@ -42,28 +43,40 @@ function Forum({ discussions, setDiscussions, refreshDiscussions }) {
   });
 
   return (
-    <div className="grid grid-cols-12 gap-6">
+    <div className="min-h-screen bg-gray-50 flex justify-center">
+      
+      {/* Centered Container */}
+      <div className="w-full max-w-7xl px-6 py-8">
 
-      {/* Sidebar */}
-      <div className="col-span-3">
-        <FilterSidebar
-          selectedTag={selectedTag}
-          setSelectedTag={setSelectedTag}
-        />
+        <div className="grid grid-cols-12 gap-8 items-start">
+
+          {/* Sidebar */}
+          <div className="col-span-4">
+            <FilterSidebar
+              selectedTag={selectedTag}
+              setSelectedTag={setSelectedTag}
+            />
+          </div>
+
+          {/* Feed */}
+          <div className="col-span-7">
+            <DiscussionFeed
+              discussions={filteredDiscussions}
+              setDiscussions={setDiscussions}
+              onDelete={handleDelete}
+              onUpvote={handleUpvote}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+            />
+          </div>
+
+          {/* Right Panel (OPTIONAL — your mood widget area) */}
+          <div className="col-span-3">
+            {/* Put your MoodDetection or side widget here */}
+          </div>
+
+        </div>
       </div>
-
-      {/* Feed */}
-      <div className="col-span-6">
-        <DiscussionFeed
-          discussions={filteredDiscussions}
-          setDiscussions={setDiscussions}
-          onDelete={handleDelete}
-          onUpvote={handleUpvote}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-        />
-      </div>
-
     </div>
   );
 }
