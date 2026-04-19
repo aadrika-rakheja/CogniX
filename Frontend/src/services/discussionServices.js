@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api/discussions";
+const API_URL = "http://localhost:2424/api/discussions";
 
 export const getDiscussions = async () => {
   const res = await fetch(API_URL);
@@ -43,10 +43,19 @@ export const updateDiscussion = async (id, updatedData) => {
   return res.json();
 };
 
-export const deleteDiscussion = async (id) => {
-  await fetch(`${API_URL}/${id}`, {
+export const deleteDiscussion = async (id, userId) => {
+  const res = await fetch(`${API_URL}/${id}`, {
     method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId }),
   });
+
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.error || "Failed to delete");
+  }
 };
 
 export const upvoteDiscussion = async (id) => {

@@ -1,12 +1,45 @@
 const Discussion = require("../models/Discussion");
 const Notification = require("../models/Notification");
+const User = require("../models/User");
 
 
 // ================= GET ALL =================
 exports.getDiscussions = async (req, res) => {
   try {
     const discussions = await Discussion.find().sort({ createdAt: -1 });
-    res.json(discussions);
+
+    const userIds = new Set();
+    discussions.forEach((discussion) => {
+      if (discussion.authorId) userIds.add(String(discussion.authorId));
+      discussion.comments?.forEach((comment) => {
+        if (comment.authorId) userIds.add(String(comment.authorId));
+      });
+    });
+
+    const users = userIds.size
+      ? await User.find({ _id: { $in: Array.from(userIds) } }).select("name email")
+      : [];
+
+    const userMap = users.reduce((map, user) => {
+      map[String(user._id)] = user.name || user.email;
+      return map;
+    }, {});
+
+    const enriched = discussions.map((discussion) => {
+      const discussionObj = discussion.toObject();
+      discussionObj.author =
+        userMap[String(discussion.authorId)] || discussion.author || discussion.authorId;
+
+      discussionObj.comments = discussionObj.comments.map((comment) => ({
+        ...comment,
+        author:
+          userMap[String(comment.authorId)] || comment.author || "Unknown User",
+      }));
+
+      return discussionObj;
+    });
+
+    res.json(enriched);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -30,11 +63,18 @@ exports.createDiscussion = async (req, res) => {
 // ================= DELETE =================
 exports.deleteDiscussion = async (req, res) => {
   try {
-    const deleted = await Discussion.findByIdAndDelete(req.params.id);
+    const { userId } = req.body;
 
-    if (!deleted) {
+    const discussion = await Discussion.findById(req.params.id);
+    if (!discussion) {
       return res.status(404).json({ error: "Discussion not found" });
     }
+
+    if (String(discussion.authorId) !== String(userId)) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    const deleted = await Discussion.findByIdAndDelete(req.params.id);
 
     res.json({ message: "Deleted successfully" });
   } catch (error) {
@@ -47,17 +87,22 @@ exports.deleteDiscussion = async (req, res) => {
 // ================= UPDATE =================
 exports.updateDiscussion = async (req, res) => {
   try {
-    const { title, description, tags } = req.body;
+    const { title, description, tags, userId } = req.body;
+
+    const discussion = await Discussion.findById(req.params.id);
+    if (!discussion) {
+      return res.status(404).json({ error: "Discussion not found" });
+    }
+
+    if (String(discussion.authorId) !== String(userId)) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
 
     const updated = await Discussion.findByIdAndUpdate(
       req.params.id,
       { title, description, tags },
       { new: true }
     );
-
-    if (!updated) {
-      return res.status(404).json({ error: "Discussion not found" });
-    }
 
     res.json(updated);
   } catch (error) {
@@ -80,13 +125,15 @@ exports.upvoteDiscussion = async (req, res) => {
 
     discussion.upvotedBy = discussion.upvotedBy || [];
 
-    const alreadyLiked = discussion.upvotedBy.includes(userId);
+    const alreadyLiked = discussion.upvotedBy.some(
+      (id) => String(id) === String(userId)
+    );
 
     if (alreadyLiked) {
       // 🔻 UNLIKE
       discussion.upvotes = Math.max(0, discussion.upvotes - 1);
       discussion.upvotedBy = discussion.upvotedBy.filter(
-        (id) => id !== userId
+        (id) => String(id) !== String(userId)
       );
     } else {
       // 🔺 LIKE
@@ -94,9 +141,10 @@ exports.upvoteDiscussion = async (req, res) => {
       discussion.upvotedBy.push(userId);
 
       // 🔥 NOTIFICATION (LIKE)
-      if (discussion.author && discussion.author !== userId) {
+      const likeTarget = discussion.authorId || discussion.authorEmail || discussion.author;
+      if (likeTarget && String(likeTarget) !== String(userId)) {
         await Notification.create({
-          userId: discussion.author,
+          userId: likeTarget,
           type: "like",
           message: "Someone liked your discussion",
           discussionId: discussion._id,
@@ -117,7 +165,7 @@ exports.upvoteDiscussion = async (req, res) => {
 // ================= ADD COMMENT / REPLY =================
 exports.addComment = async (req, res) => {
   try {
-    const { text, author, parentId } = req.body;
+    const { text, author, authorEmail, authorId, parentId } = req.body;
 
     const discussion = await Discussion.findById(req.params.id);
 
@@ -129,15 +177,18 @@ exports.addComment = async (req, res) => {
     const newComment = {
       text,
       author,
+      authorEmail,
+      authorId,
       parentId: parentId || null,
     };
 
     discussion.comments.push(newComment);
 
     // 🔥 NOTIFICATION: COMMENT ON DISCUSSION
-    if (!parentId && discussion.author !== author) {
+    const commentTarget = discussion.authorId || discussion.authorEmail || discussion.author;
+    if (!parentId && commentTarget && String(commentTarget) !== String(authorId)) {
       await Notification.create({
-        userId: discussion.author,
+        userId: commentTarget,
         type: "comment",
         message: "Someone commented on your discussion",
         discussionId: discussion._id,
@@ -150,9 +201,11 @@ exports.addComment = async (req, res) => {
         (c) => String(c._id) === String(parentId)
       );
 
-      if (parentComment && parentComment.author !== author) {
+      const replyTarget =
+        parentComment?.authorId || parentComment?.authorEmail || parentComment?.author;
+      if (replyTarget && String(replyTarget) !== String(authorId)) {
         await Notification.create({
-          userId: parentComment.author,
+          userId: replyTarget,
           type: "reply",
           message: "Someone replied to your comment",
           discussionId: discussion._id,

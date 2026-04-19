@@ -4,6 +4,7 @@ import Icon from './Icon'
 import { Link, useLocation } from 'react-router-dom'
 import '../css/NavBar.css'
 import { useNavigate } from 'react-router-dom'
+import NotificationBell from '../../components/NotificationBell'
 
 
 function NavBar() {
@@ -54,6 +55,7 @@ function NavBar() {
       </div>
 
       <div className="navbar__actions">
+        <NotificationBell />
         <button className="icon-btn" onClick={() => window.location.reload()} title="Refresh Dashboard">
           <span className="material-symbols-outlined">autorenew</span>
         </button>

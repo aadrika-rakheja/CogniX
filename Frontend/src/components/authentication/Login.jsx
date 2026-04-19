@@ -25,8 +25,11 @@ function Login() {
             const data = await res.json();
 
             if (data.success) {
-                // ✅ Store token
+                // ✅ Store token and user identity
                 localStorage.setItem("token", data.token);
+                localStorage.setItem("userId", data.user.id);
+                localStorage.setItem("username", data.user.name || data.user.email);
+                localStorage.setItem("email", data.user.email || "");
 
                 // ✅ Decode role
                 const decode = JSON.parse(atob(data.token.split(".")[1]));
@@ -34,8 +37,8 @@ function Login() {
 
                 alert("Login Successful");
 
-                const role=localStorage.getItem("role");
-                if(role=="user")
+                const role = localStorage.getItem("role");
+                if (role == "user")
                   navigate("/dashboard");
                 else
                   navigate("/admin");

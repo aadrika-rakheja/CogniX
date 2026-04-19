@@ -19,6 +19,13 @@ import Forum from "./pages/Forum";
 import NewDiscussion from "./pages/NewDiscussion";
 import DiscussionDetail from "./pages/DiscussionDetail";
 
+import {
+  getDiscussions,
+  createDiscussion,
+  deleteDiscussion,
+  upvoteDiscussion,
+} from "./services/discussionServices";
+
 function App() {
   const isLoggedIn = localStorage.getItem("token");
 
@@ -34,8 +41,24 @@ function App() {
   };
 
   useEffect(() => {
-    if (!localStorage.getItem("userId")) {
-      localStorage.setItem("userId", Date.now().toString());
+    const token = localStorage.getItem("token");
+    const storedUserId = localStorage.getItem("userId");
+
+    if (!storedUserId) {
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split(".")[1]));
+          if (payload?.id) {
+            localStorage.setItem("userId", payload.id);
+          } else {
+            localStorage.setItem("userId", Date.now().toString());
+          }
+        } catch (error) {
+          localStorage.setItem("userId", Date.now().toString());
+        }
+      } else {
+        localStorage.setItem("userId", Date.now().toString());
+      }
     }
   }, []);
 

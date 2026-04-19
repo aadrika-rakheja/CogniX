@@ -40,7 +40,9 @@ function NewDiscussion({ refreshDiscussions }) {
       title,
       description,
       tags: selectedTags,
-      author: "You", // temporary
+      author: localStorage.getItem("username"),
+      authorEmail: localStorage.getItem("email"),
+      authorId: localStorage.getItem("userId"),
       repliesCount: 0,
       createdAt: new Date().toISOString(),
     };
@@ -48,7 +50,7 @@ function NewDiscussion({ refreshDiscussions }) {
     try {
       await createDiscussion(newPost);
       await refreshDiscussions();
-      navigate("/");
+      navigate("/forum");
     } catch (error) {
       console.error("Create failed:", error.message);
     }
@@ -59,7 +61,7 @@ function NewDiscussion({ refreshDiscussions }) {
 
       {/* Back Button */}
       <button
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/forum")}
         className="flex items-center gap-2 text-gray-600 hover:text-black mb-4"
       >
         <ArrowLeftIcon className="h-5 w-5" />
