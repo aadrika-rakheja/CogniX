@@ -1,25 +1,11 @@
-const express = require("express");
-const router = express.Router();
-const Topic = require("../models/Topic");
+const express=require("express");
+const {createTopic,getAllTopicsBySubj,getTopics, getTopicsById,deleteTopic}=require("../controllers/topicController");
+const router=express.Router();
 
-// ✅ GET ALL TOPICS
-router.get("/", async (req, res) => {
-  try {
-    const topics = await Topic.find();
-    res.json({ success: true, topics });
-  } catch (err) {
-    res.status(500).json({ success: false });
-  }
-});
+router.post("/createTopic",createTopic);
+router.get("/getTopics",getTopics);
+router.delete("/:id/:tid", deleteTopic);
+router.get("/:id/video/:tid",getTopicsById);
+router.get("/:id",getAllTopicsBySubj);
 
-// ✅ CREATE TOPIC
-router.post("/", async (req, res) => {
-  try {
-    const topic = await Topic.create(req.body);
-    res.json({ success: true, topic });
-  } catch (err) {
-    res.status(500).json({ success: false });
-  }
-});
-
-module.exports = router;
+module.exports=router;
