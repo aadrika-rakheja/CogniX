@@ -30,4 +30,11 @@ app.use("/api/games",require("./routes/GamesRouter"));
 app.use("/api/questions", require("./routes/QuestionsRoute"));
 app.use("/api/topics", require("./routes/requireTopicRoutes"));
 
+
+
+const discussionRoutes = require("./routes/discussionRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
+app.use("/api/discussions", discussionRoutes);
+app.use("/api/notifications", notificationRoutes);
+
 module.exports=app;

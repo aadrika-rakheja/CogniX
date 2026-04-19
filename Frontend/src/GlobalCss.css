@@ -12,9 +12,9 @@
   --mood-color: #6366f1;
 }
 
-* {
+/* * {
   box-sizing: border-box;
-}
+} */
 
 html {
   scroll-behavior: smooth;

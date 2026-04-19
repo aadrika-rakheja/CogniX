@@ -14,8 +14,30 @@ import QuizGame from "./pages/QuizGame";
 import AdminPanel from "./pages/AdminPanel";
 import ProtectedRoutes from "./components/authentication/ProtectedRouter";
 
+import { useState, useEffect } from "react";
+import Forum from "./pages/Forum";
+import NewDiscussion from "./pages/NewDiscussion";
+import DiscussionDetail from "./pages/DiscussionDetail";
+
 function App() {
   const isLoggedIn = localStorage.getItem("token");
+
+  const [discussions, setDiscussions] = useState([]);
+
+  useEffect(() => {
+    fetchDiscussions();
+  }, []);
+
+  const fetchDiscussions = async () => {
+    const data = await getDiscussions();
+    setDiscussions(data);
+  };
+
+  useEffect(() => {
+    if (!localStorage.getItem("userId")) {
+      localStorage.setItem("userId", Date.now().toString());
+    }
+  }, []);
 
   return (
     <ThemeProvider>
@@ -33,6 +55,11 @@ function App() {
            <Route path="/quiz" element={<div>Select a game first</div>} />
            <Route path="/games" element={ <ProtectedRoutes><GamesDashboard /></ProtectedRoutes>} />
            <Route path="/progress" element={<ProtectedRoutes><ProgressDashboard/></ProtectedRoutes>} />
+
+          {/* uplaksh */}
+           <Route path="/forum"  element={<Forum discussions={discussions} setDiscussions={setDiscussions}  refreshDiscussions={fetchDiscussions}  />}/>
+           <Route path="/new-discussion"  element={ <NewDiscussion refreshDiscussions={fetchDiscussions} /> }/>
+           <Route path="/discussion/:id" element={<DiscussionDetail />} />
 
             {/* ADMIN */}
             <Route path="/admin" element={<ProtectedRoutes adminOnly={true}><AdminPage /></ProtectedRoutes>}/>

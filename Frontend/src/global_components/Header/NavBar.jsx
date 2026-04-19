@@ -17,7 +17,8 @@ function NavBar() {
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'AI Tutor', path: '/ai-tut' },
     { name: 'Quiz', path: '/games' },
-    { name: 'Progress', path: '/progress' }
+    { name: 'Progress', path: '/progress' },
+    {name:'Forum' , path:'/forum'}
   ]:[
     { name: 'Admin', path: '/admin' },
     {name:'Games', path:'/admin/:topic'}
