@@ -1,8 +1,7 @@
-import  { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 const ThemeContext = createContext();
 
-// Color mapping based on mood
 const moodColors = {
   Engaged: "#f97316",
   Neutral: "#6366f1",
@@ -11,42 +10,56 @@ const moodColors = {
   Bored: "#eab308"
 };
 
-
-
 export function ThemeProvider({ children }) {
-  const [mood, setMood] = useState("Neutral");
+
+  // ✅ persist mood
+  const [mood, setMood] = useState(() => {
+    return localStorage.getItem("mood") || "Neutral";
+  });
+
+  // ✅ persist adaptive UI
+  const [adaptiveUI, setAdaptiveUI] = useState(() => {
+    return JSON.parse(localStorage.getItem("adaptiveUI")) ?? true;
+  });
+
   const [colour, setColour] = useState(moodColors["Neutral"]);
 
-  //update  on mood change
   useEffect(() => {
-    setColour(moodColors[mood] || moodColors["Neutral"]);
+    localStorage.setItem("mood", mood);
   }, [mood]);
 
-  // Function to update mood (call this from your backend)
+  useEffect(() => {
+    localStorage.setItem("adaptiveUI", adaptiveUI);
+  }, [adaptiveUI]);
+
+  // ✅ MAIN LOGIC (correct)
+  useEffect(() => {
+    if (adaptiveUI) {
+      setColour(moodColors[mood] || moodColors["Neutral"]);
+    } else {
+      setColour(moodColors["Neutral"]);
+    }
+  }, [mood, adaptiveUI]);
+
   const updateMood = (newMood) => {
     if (moodColors[newMood]) {
       setMood(newMood);
     }
   };
 
-  const value = {
-    mood,
-    colour,
-    updateMood,
-  };
-
   return (
-    <ThemeContext.Provider value={value}>
+    <ThemeContext.Provider value={{
+      mood,
+      colour,
+      adaptiveUI,
+      setAdaptiveUI,
+      updateMood
+    }}>
       {children}
     </ThemeContext.Provider>
   );
 }
 
-// Custom hook to use theme anywhere
 export function useTheme() {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useTheme must be used within ThemeProvider');
-  }
-  return context;
+  return useContext(ThemeContext);
 }

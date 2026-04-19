@@ -55,14 +55,14 @@ const initializeUserProgress=async(userId)=>{
 const syncUserProgress = async (progress) => {
   let updated = false;
 
-  // ✅ helper for safe ID extraction
+  // helper for safe ID extraction
   const getId = (id) => id?._id?.toString() || id?.toString();
 
-  // 🔥 1. FETCH ALL COURSES
+  
   const allCourses = await Subjects.find();
   const allCourseIds = new Set(allCourses.map(c => c._id.toString()));
 
-  // 🔥 2. REMOVE DELETED COURSES
+  
   const beforeCourses = progress.courseProgress.length;
 
   progress.courseProgress = progress.courseProgress.filter(c =>
@@ -73,7 +73,7 @@ const syncUserProgress = async (progress) => {
     updated = true;
   }
 
-  // 🔥 3. ADD NEW COURSES
+  
   const existingCourseIds = new Set(
     progress.courseProgress.map(c => getId(c.course_id))
   );
@@ -96,7 +96,7 @@ const syncUserProgress = async (progress) => {
     }
   }
 
-  // 🔥 4. SYNC TOPICS
+  //  4. SYNC TOPICS
   for (const course of progress.courseProgress) {
 
     const courseId = getId(course.course_id);
@@ -111,7 +111,7 @@ const syncUserProgress = async (progress) => {
 
     const allTopicIds = new Set(allTopics.map(t => t._id.toString()));
 
-    // ❌ REMOVE DELETED TOPICS
+    //  REMOVE DELETED TOPICS
     const beforeTopics = course.topicProgress.length;
 
     course.topicProgress = course.topicProgress.filter(tp =>
@@ -122,7 +122,7 @@ const syncUserProgress = async (progress) => {
       updated = true;
     }
 
-    // 🔥 ADD NEW TOPICS
+    //  ADD NEW TOPICS
     const existingTopicIds = new Set(
       course.topicProgress.map(tp => getId(tp.topic_id))
     );
@@ -145,7 +145,7 @@ const syncUserProgress = async (progress) => {
     }
   }
 
-  // 🔥 5. SAVE ONLY IF CHANGED
+  //  5. SAVE ONLY IF CHANGED
   if (updated) {
     await progress.save();
   }
@@ -176,25 +176,28 @@ const getUserProgress=async(req,res)=>{
         await syncUserProgress(progress);
 
          //update streak
-        const today=new Date();
-        today.setHours(0,0,0,0);
-        if(!progress.lastActiveDate)
-        {
-            progress.streak=1;
-            progress.lastActiveDate=today;
-        }else{
-            const lastDate=progress.lastActiveDate;
-            lastDate.setHours(0,0,0,0);
-            const diff=Math.floor((today-lastDate)/(1000*60*60*24));
-            if(diff===1){
-                progress.streak+=1;
-                progress.lastActiveDate=today;
-            }else{
-                progress.streak=1;
-                progress.lastActiveDate=today;
+       const today = new Date();
+        today.setUTCHours(0,0,0,0);
+
+        if (!progress.lastActiveDate) {
+            progress.streak = 1;
+            progress.lastActiveDate = today;
+        } else {
+            const lastDate = new Date(progress.lastActiveDate);
+            lastDate.setUTCHours(0,0,0,0);
+
+            const diff = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+
+            if (diff === 0) {
+                progress.lastActiveDate = today; // keep it fresh
+            } else if (diff === 1) {
+                progress.streak += 1;
+                progress.lastActiveDate = today;
+            } else {
+                progress.streak = 1;
+                progress.lastActiveDate = today;
             }
         }
-        
         await progress.save();
 
 

@@ -1,25 +1,35 @@
 const Progress = require("../models/Progress");
 
-const getUserId = (req) => req?.user?.id;
+// GET
+const getUserProgress = async (req, res) => {
+  try {
+    const progress = await Progress.find();
 
-// ✅ SAVE PROGRESS
+    res.status(200).json({
+      success: true,
+      data: progress,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+// SAVE
 const saveProgress = async (req, res) => {
   try {
     const { topic, score, totalQuestions } = req.body;
 
-    // 🔥 ADDED: Safety check for user
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({
+    if (!topic || score === undefined) {
+      return res.status(400).json({
         success: false,
-        message: "Unauthorized: User not found in token",
+        message: "Missing data",
       });
     }
 
-    // 🔥 ADDED: Debug log
-    console.log("Saving for user:", req.user.id);
-
     const newProgress = await Progress.create({
-      user: getUserId(req),
       topic,
       score,
       totalQuestions,
@@ -29,43 +39,12 @@ const saveProgress = async (req, res) => {
       success: true,
       data: newProgress,
     });
-
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
     res.status(500).json({
       success: false,
-      message: "Error saving progress",
+      message: err.message,
     });
   }
 };
 
-// ✅ GET USER PROGRESS
-const getMyProgress = async (req, res) => {
-  try {
-    // 🔥 ADDED: Safety check
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized",
-      });
-    }
-
-    // 🔥 ADDED: Debug log
-    console.log("Fetching progress for user:", req.user.id);
-
-    const data = await Progress.find({ user: req.user.id });
-
-    res.json({
-      success: true,
-      data,
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error fetching progress",
-    });
-  }
-};
-
-module.exports = { saveProgress, getMyProgress };
+module.exports = { getUserProgress, saveProgress };

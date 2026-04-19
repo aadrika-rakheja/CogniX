@@ -5,6 +5,7 @@ import SubjCard from './SubjCard'
 import ContinueTopics from './ContinueTopics'
 import { useEffect, useState } from 'react'
 import {getUserProgress} from '../services/userProgress'
+import Loader from '../../global_components/loader/Loader'
 
 function Dashboard() {
   const [response,setResponse]=useState();
@@ -22,6 +23,9 @@ function Dashboard() {
 
       fetchProgress();
   },[]);
+
+  if(!response)
+    return <Loader/>
 
 
   return (

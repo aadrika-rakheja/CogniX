@@ -1,26 +1,25 @@
-import React from "react";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-function Games()
-{
-     const[scores,setScores]=useState(0);
+function GameCard({ game }) {
+    const navigate = useNavigate();
 
-    return(
-        <>
-           <div>
-            <h1>Game Dashboard</h1>
-            <h2>Score:{scores}</h2>
+    return (
+        <div className="border p-4 rounded-lg shadow">
+            <h2 className="text-xl font-bold">{game.title}</h2>
 
-            <button onClick={()=>{
-                setScores(scores+1)
-            }}>Increase Scores</button>
+            <p className="text-gray-600 mb-4">
+                {game.description}
+            </p>
 
-            <button onClick={()=>{
-                setScores(0);
-            }}>Reset</button>
-           </div>
-        </>
+            {/* ✅ FIX IS HERE */}
+            <button
+                onClick={() => navigate(`/quiz/${game.topic}`)}
+                className="bg-blue-600 text-white px-4 py-2 rounded w-full"
+            >
+                Play
+            </button>
+        </div>
     );
 }
 
-export default Games;
+export default GameCard;

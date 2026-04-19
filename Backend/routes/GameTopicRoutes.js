@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Topic = require("../models/GamesTopic"); 
-
+const Topic = require("../models/GamesTopic");
 // ✅ GET ALL TOPICS
 router.get("/", async (req, res) => {
   try {

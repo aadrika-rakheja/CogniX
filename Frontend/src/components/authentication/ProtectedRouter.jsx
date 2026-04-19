@@ -4,13 +4,20 @@ const ProtectedRoutes = ({ children, adminOnly = false }) => {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
-  // decode token
-  const user = JSON.parse(atob(token.split(".")[1]));
+  let user = null;
 
-  // 🔥 admin check
+  try {
+    const payload = token.split(".")[1];
+    user = JSON.parse(atob(payload));
+  } catch (error) {
+    console.error("Invalid token:", error);
+    localStorage.removeItem("token");
+    return <Navigate to="/" />;
+  }
+
   if (adminOnly && user.role !== "admin") {
     return <Navigate to="/dashboard" />;
   }

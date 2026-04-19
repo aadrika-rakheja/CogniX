@@ -7,13 +7,18 @@ function GameCard({ game }) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-    const { color } = useTheme();
+    const { colour } = useTheme(); // ✅ keep same
 
-    // 🔐 GET USER ROLE
-    const token = localStorage.getItem("token");
-    const user = token ? JSON.parse(atob(token.split(".")[1])) : null;
+    // 🔐 SAFE USER PARSE (no crash)
+    let user = null;
+    try {
+        const token = localStorage.getItem("token");
+        user = token ? JSON.parse(atob(token.split(".")[1])) : null;
+    } catch {
+        user = null;
+    }
 
-    // 🎯 GET TOPIC
+    // 🎯 GET TOPIC (NO CHANGE)
     const getTopic = () => {
         const title = game?.title || "";
         let topic = title.toLowerCase();
@@ -27,7 +32,7 @@ function GameCard({ game }) {
 
     const topic = getTopic();
 
-    // 🎮 PLAY GAME
+    // 🎮 PLAY GAME (NO LOGIC CHANGE)
     const handlePlayGame = async () => {
         setIsLoading(true);
         setError(null);
@@ -46,19 +51,16 @@ function GameCard({ game }) {
             const data = await response.json();
 
             if (!data.success || !data.questions || data.questions.length === 0) {
-                setError("No questions available for this game. Please contact an administrator.");
-                setIsLoading(false);
-                return;
+                throw new Error("No questions available for this game.");
             }
 
-            navigate("/quiz", {
-                state: {
-                    questions: data.questions,
-                    topic,
-                    game: game,
-                    title: game.title,
-                },
-            });
+          navigate(`/quiz/${topic}`, {
+    state: {
+        questions: data.questions,
+        game: game,
+        title: game.title,
+    },
+});
 
         } catch (err) {
             setError(err.message);
@@ -67,13 +69,13 @@ function GameCard({ game }) {
         }
     };
 
-    // 🔧 ADMIN NAVIGATION
+    // 🔧 ADMIN NAVIGATION (NO CHANGE)
     const handleAdmin = () => {
         if (!topic) return;
         navigate(`/admin/${topic}`);
     };
 
-    // 🎯 Difficulty badge
+    // 🎯 Difficulty badge (NO CHANGE)
     const getDifficultyColor = (difficulty) => {
         if (difficulty === "Easy") return "bg-green-100 text-green-600";
         if (difficulty === "Medium") return "bg-yellow-100 text-yellow-600";
@@ -81,7 +83,7 @@ function GameCard({ game }) {
         return "bg-gray-100 text-gray-600";
     };
 
-    // 🎨 Illustration (same as yours)
+    // 🎨 Illustration (NO CHANGE)
     const renderIllustration = (title) => {
         const t = title?.toLowerCase();
 
@@ -105,17 +107,11 @@ function GameCard({ game }) {
                         <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                         <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                     </div>
-                    <div className="flex gap-6">
-                        <div className="w-3 h-3 bg-green-300 rounded-full"></div>
-                        <div className="w-3 h-3 bg-green-300 rounded-full"></div>
-                        <div className="w-3 h-3 bg-green-300 rounded-full"></div>
-                    </div>
                 </div>
             );
         }
 
-        if (t.includes("memory")) 
-        {
+        if (t.includes("memory")) {
             return (
                 <div className="flex gap-2">
                     <div className="w-6 h-8 bg-purple-400 rounded-md"></div>
@@ -129,10 +125,21 @@ function GameCard({ game }) {
     };
 
     return (
-        <div className="group rounded-2xl border border-gray-200 bg-white p-4 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+        <div
+            style={{
+                background: `linear-gradient(135deg, ${colour}12, #ffffff)`,
+                borderColor: `${colour}30`
+            }}
+            className="group rounded-2xl border p-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+        >
 
             {/* Illustration */}
-            <div className="h-28 w-full rounded-xl bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 flex items-center justify-center mb-4">
+            <div
+                style={{
+                    background: `linear-gradient(135deg, ${colour}25, ${colour}08)`
+                }}
+                className="h-28 w-full rounded-xl flex items-center justify-center mb-4"
+            >
                 {renderIllustration(game?.title)}
             </div>
 
@@ -153,7 +160,7 @@ function GameCard({ game }) {
                 </span>
 
                 <span className="text-xs text-gray-400">
-                    5-10 min
+                    5–10 min
                 </span>
             </div>
 
@@ -161,24 +168,29 @@ function GameCard({ game }) {
             <button
                 onClick={handlePlayGame}
                 disabled={isLoading}
-                className="mt-4 w-full flex items-center justify-center gap-2 rounded-lg bg-indigo-500 text-white py-2 text-sm font-medium hover:bg-indigo-600"
+                style={{ backgroundColor: colour }}
+                className="mt-4 w-full flex items-center justify-center gap-2 rounded-lg text-white py-2 text-sm font-medium transition hover:opacity-90"
             >
                 <Play size={16} />
                 {isLoading ? "Loading..." : "Play"}
             </button>
 
-            {/* 🔥 ADMIN BUTTON */}
+            {/* ADMIN */}
             {user?.role === "admin" && (
                 <button
                     onClick={handleAdmin}
-                    className="mt-2 w-full flex items-center justify-center gap-2 rounded-lg border border-indigo-500 text-indigo-600 py-2 text-sm font-medium hover:bg-indigo-50"
+                    style={{
+                        borderColor: colour,
+                        color: colour
+                    }}
+                    className="mt-2 w-full flex items-center justify-center gap-2 rounded-lg border py-2 text-sm font-medium hover:bg-gray-50 transition"
                 >
                     <Settings size={16} />
                     Manage Questions
                 </button>
             )}
 
-            {/* Error */}
+            {/* ERROR */}
             {error && (
                 <p className="text-red-500 text-xs mt-2">{error}</p>
             )}

@@ -1,58 +1,54 @@
 import React from "react";
 import { useState } from "react";
 import { useTheme } from "../../context/ThemeContext";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
    const { colour } = useTheme();
+   const navigate = useNavigate();
+
    const [Fullname, setFullname] = useState("");
    const [Email, setEmail] = useState("");
    const [Password, setPassword] = useState("");
     
-    const handelSignup=async(e)=>{
+   const handelSignup = async (e) => {
         e.preventDefault();
-        if(!Fullname || !Email || !Password)
-        {
+
+        if (!Fullname || !Email || !Password) {
             alert("All Fields are Required..");
+            return; // ✅ IMPORTANT FIX
         }
 
-        try 
-        {
-          const res=await fetch("http://localhost:2424/api/auth/signup",
-            {
-            method:"POST",
-            headers:
-            {
-              "Content-Type":"application/json"
+        try {
+          const res = await fetch("http://localhost:2424/api/auth/signup", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
             },
-
-            body:JSON.stringify({
-              email:Email,
-              password:Password
+            body: JSON.stringify({
+              fullname: Fullname, // ✅ FIXED (was missing)
+              email: Email,
+              password: Password
             })
           });
 
-          const data= await res.json();
+          const data = await res.json();
 
-          if(data.success)
-          {
+          if (data.success) {
             alert("Sign-Up Successful.");
-          
 
-          window.location.href="/";
+            // ✅ redirect properly (NO reload)
+            navigate("/");
+
+          } else {
+            alert(data.message);
           }
 
-        else 
-        {
-          alert(data.message);
-        }
-      }
-        catch(error)
-        {
+        } catch (error) {
           console.log(error);
           alert("Server error");
         }
     };
-
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-300 to-purple-100 flex items-center justify-center p-6">
@@ -81,6 +77,7 @@ function Signup() {
                   placeholder="Enter your email"
                   value={Email}
                   onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email" // ✅ fix warning
                   className="w-full px-4 py-3 border-2 border-indigo-200 rounded-lg mb-2 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition bg-indigo-50"
                 />
               </div>
@@ -92,6 +89,7 @@ function Signup() {
                   placeholder="Enter your password"
                   value={Password}
                   onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="new-password" // ✅ fix warning
                   className="w-full px-4 py-3 border-2 border-indigo-200 rounded-lg mb-2 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition bg-indigo-50"
                 />
               </div>
@@ -105,7 +103,13 @@ function Signup() {
             </form>
 
             <div className="mt-6 text-center text-gray-700 text-sm">
-              Already have an account? <a href="#" className="text-indigo-600 hover:text-purple-600 font-semibold">Sign In</a>
+              Already have an account? 
+              <span
+                onClick={() => navigate("/")}
+                className="text-indigo-600 hover:text-purple-600 font-semibold cursor-pointer ml-1"
+              >
+                Sign In
+              </span>
             </div>
 
             <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-5 border border-indigo-200 mt-6">
@@ -129,7 +133,7 @@ function Signup() {
             </div>
           </div>
         </div>
-    )
+    );
 }
 
 export default Signup;

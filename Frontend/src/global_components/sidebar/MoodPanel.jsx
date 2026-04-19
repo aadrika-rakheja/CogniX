@@ -10,9 +10,8 @@ const moodEmojis = {
   Bored: '🥱'
 };
 
-function MoodPanel({updateMood}) {
-  const { mood, colour } = useTheme();
-  const [adaptiveUI, setAdaptiveUI] = useState(true);
+function MoodPanel() {
+  const { mood, colour, adaptiveUI, setAdaptiveUI, updateMood } = useTheme();
   const [showDropdown, setShowDropdown] = useState(false);
   const moods = ["Engaged", "Neutral", "Confused", "Stressed", "Bored"];
   const [selectedMood, setSelectedMood] = useState(mood);
@@ -22,12 +21,13 @@ function MoodPanel({updateMood}) {
     setShowDropdown(false);
   }
 
-  useEffect(()=>{
-    if(adaptiveUI)
-      setSelectedMood(mood)
-    else
-      setSelectedMood("Neutral")
-  },[mood, adaptiveUI])
+ useEffect(() => {
+  if (adaptiveUI) {
+    setSelectedMood(mood);
+  } else {
+    setSelectedMood("Neutral");
+  }
+}, [mood, adaptiveUI]);
 
   return (
     <section className="mood-panel">

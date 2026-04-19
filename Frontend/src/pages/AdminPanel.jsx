@@ -6,9 +6,11 @@ import TopicSelector from "../components/Admin/TopicSelector";
 import QuestionForm from "../components/admin/QuestionForm";
 import QuestionList from "../components/Admin/QuestionList";
 import sampleQuestions from "../data/sampleQuestions";
+import { useTheme } from "../context/ThemeContext";
 
 const AdminPanel = () => {
   const { topic: routeTopic } = useParams();
+  const { colour } = useTheme(); // 🎨 theme
 
   const [topic, setTopic] = useState(routeTopic || "sorting");
   const [questions, setQuestions] = useState([]);
@@ -35,10 +37,8 @@ const AdminPanel = () => {
       );
       setQuestions(res.data.questions || []);
 
-      // If no questions exist for this topic, add sample questions
       if (!res.data.questions || res.data.questions.length === 0) {
         await addSampleQuestionsForTopic(topic);
-        // Fetch again after adding samples
         const updatedRes = await axios.get(
           `http://localhost:2424/api/questions/${topic}`
         );
@@ -64,8 +64,7 @@ const AdminPanel = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
       }
-      console.log(`Added ${topicQuestions.length} sample questions for ${topicName}`);
-      fetchQuestions(); // Refresh the list
+      fetchQuestions();
     } catch (error) {
       console.error("Error adding sample questions:", error);
     }
@@ -124,38 +123,57 @@ const AdminPanel = () => {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">
-        Admin Panel - {topic.toUpperCase()}
-      </h1>
+    <div
+      style={{
+        background: `linear-gradient(135deg, ${colour}15, #ffffff)`
+      }}
+      className="min-h-screen p-6"
+    >
+      {/* HEADER */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">
+          Admin Panel - {topic.toUpperCase()}
+        </h1>
 
-      <TopicSelector topic={topic} setTopic={setTopic} />
-
-      <div className="mb-4">
         <button
           onClick={handleAddSampleQuestions}
-          className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+          className="bg-green-500 text-white px-4 py-2 rounded-xl shadow hover:opacity-90 transition"
         >
           Add Sample Questions
         </button>
       </div>
 
-      <QuestionForm
-        form={form}
-        setForm={setForm}
-        handleSubmit={handleSubmit}
-        editingId={editingId}
-      />
+      {/* TOPIC SELECTOR */}
+      <div className="mb-6">
+        <TopicSelector topic={topic} setTopic={setTopic} />
+      </div>
 
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <QuestionList
-          questions={questions}
-          handleEdit={handleEdit}
-          handleDelete={handleDelete}
+      {/* FORM SECTION */}
+      <div className="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-lg mb-6 border">
+        <QuestionForm
+          form={form}
+          setForm={setForm}
+          handleSubmit={handleSubmit}
+          editingId={editingId}
         />
-      )}
+      </div>
+
+      {/* QUESTIONS LIST */}
+      <div className="bg-white/70 backdrop-blur-md p-6 rounded-2xl shadow border">
+        <h2 className="text-lg font-semibold mb-4">
+          Questions ({questions.length})
+        </h2>
+
+        {loading ? (
+          <p className="text-gray-500">Loading...</p>
+        ) : (
+          <QuestionList
+            questions={questions}
+            handleEdit={handleEdit}
+            handleDelete={handleDelete}
+          />
+        )}
+      </div>
     </div>
   );
 };

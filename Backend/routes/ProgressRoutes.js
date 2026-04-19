@@ -1,14 +1,13 @@
 const express = require("express");
 const router = express.Router();
 
-const { saveProgress, getMyProgress } = require("../controllers/ProgressController");
+const { saveProgress, getUserProgress } = require("../controllers/ProgressController");
+const authMiddleware = require("../middleware/authMiddlewear");
 
-const authMiddlewear = require("../middleware/authMiddlewear");
+// GET progress
+router.get("/", authMiddleware, getUserProgress);
 
-// save progress
-router.post("/", authMiddlewear, saveProgress);
-
-// get progress
-router.get("/", authMiddlewear, getMyProgress);
+// SAVE progress
+router.post("/", authMiddleware, saveProgress);
 
 module.exports = router;

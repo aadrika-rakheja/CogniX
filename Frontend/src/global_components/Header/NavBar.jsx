@@ -3,21 +3,33 @@ import { useTheme } from '../../context/ThemeContext'
 import Icon from './Icon'
 import { Link, useLocation } from 'react-router-dom'
 import '../css/NavBar.css'
+import { useNavigate } from 'react-router-dom'
 
 
 function NavBar() {
   const { colour } = useTheme()
   const location = useLocation()
+  const role=localStorage.getItem("role");
+  const navigate=useNavigate();
+  console.log(role);
 
-  const centerButtons = [
+  const centerButtons = role=="user"?[
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'AI Tutor', path: '/ai-tut' },
-    { name: 'Quiz', path: '/quiz' },
-    //{ name: 'Progress', path: '/progress' },
-    { name: 'Admin', path: '/admin' }
+    { name: 'Quiz', path: '/games' },
+    { name: 'Progress', path: '/progress' }
+  ]:[
+    { name: 'Admin', path: '/admin' },
+    {name:'Games', path:'/admin/:topic'}
   ]
-
+  
   const isActive = (btn) =>location.pathname==btn.path;
+
+  const handleLogout=()=>{
+    localStorage.removeItem("token");
+    localStorage.removeItem("mood");
+    navigate("/");
+  }
 
   return (
     <nav className="navbar">
@@ -41,13 +53,10 @@ function NavBar() {
       </div>
 
       <div className="navbar__actions">
-        <button className="icon-btn" aria-label="Toggle theme">
-          <span className="material-symbols-outlined">dark_mode</span>
+        <button className="icon-btn" onClick={() => window.location.reload()} title="Refresh Dashboard">
+          <span className="material-symbols-outlined">autorenew</span>
         </button>
-        <button className="icon-btn" aria-label="Profile">
-          <span className="material-symbols-outlined">person</span>
-        </button>
-        <button className="icon-btn logout" aria-label="Logout">
+        <button className="icon-btn logout" aria-label="Logout" onClick={handleLogout} title="Logout">
           <span className="material-symbols-outlined">logout</span>
         </button>
       </div>

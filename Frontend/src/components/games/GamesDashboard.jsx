@@ -1,167 +1,145 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { useTheme } from "../../context/ThemeContext";
-import { useNavigate } from "react-router-dom";
 import GameCard from "./GameCard";
 import FilterBar from "./FilterBar";
 import StatCard from "./StatCard";
+import { useTheme } from "../../context/ThemeContext"; // ✅ added
 
-const Dashboard = () => {
-    const [games, setGames] = useState([]);
-    const [filter, setFilter] = useState("All");
-    const [loading, setLoading] = useState(true);
-    const [stats, setStats] = useState(null);
-    const { colour } = useTheme();
-    const navigate = useNavigate();
+function GamesDashboard() {
+  const [games] = useState([
+    { _id: "1", title: "Sorting", difficulty: "Medium", topic: "sorting" },
+    { _id: "2", title: "Tree", difficulty: "Hard", topic: "tree" },
+    { _id: "3", title: "Memory", difficulty: "Easy", topic: "memory" },
+  ]);
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        navigate("/login");
-    };
+  const [filter, setFilter] = useState("All");
+  const [stats, setStats] = useState(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                if (!token) {
-                    console.error("No token found. User must log in.");
-                    setLoading(false);
-                    return;
-                }
+  const { colour } = useTheme(); // ✅ added
 
-                const gamesRes = await axios.get("http://localhost:2424/api/games");
+  useEffect(() => {
+    fetchStats();
+  }, []);
 
-                const statsRes = await axios.get("http://localhost:2424/api/progress", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+  const fetchStats = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-                const progressRecords = Array.isArray(statsRes.data)
-                    ? statsRes.data
-                    : Array.isArray(statsRes.data?.data)
-                    ? statsRes.data.data
-                    : [];
+      const res = await axios.get("http://localhost:2424/api/progress", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-                const gamesPlayed = progressRecords.length;
-                const highScore = progressRecords.reduce(
-                    (max, item) => Math.max(max, item.score || 0),
-                    0
-                );
-                const avgScore = progressRecords.length
-                    ? Math.round(
-                          progressRecords.reduce(
-                              (sum, item) => sum + (item.score || 0),
-                              0
-                          ) / progressRecords.length
-                      )
-                    : 0;
-                const totalAnswered = progressRecords.reduce(
-                    (sum, item) => sum + (item.totalQuestions || 0),
-                    0
-                );
-                const totalCorrect = progressRecords.reduce(
-                    (sum, item) => sum + (item.score || 0),
-                    0
-                );
-                const accuracy = totalAnswered
-                    ? Math.round((totalCorrect / totalAnswered) * 100)
-                    : 0;
+      const data = res.data?.data || [];
 
-                setGames(gamesRes.data);
-                setStats({
-                    gamesPlayed,
-                    highScore,
-                    avgScore,
-                    accuracy,
-                    streak: 0,
-                });
+      const gamesPlayed = data.length;
+      const highScore = data.reduce((m, i) => Math.max(m, i.score || 0), 0);
 
-                setTimeout(() => {
-                    setLoading(false);
-                }, 100);
-            } catch (err) {
-                console.error("Error fetching dashboard data:", err);
-                setTimeout(() => {
-                    setLoading(false);
-                }, 100);
-            }
-        };
+      const totalCorrect = data.reduce((s, i) => s + (i.score || 0), 0);
+      const totalQ = data.reduce((s, i) => s + (i.totalQuestions || 0), 0);
 
-        fetchData();
-    }, []);
+      const accuracy = totalQ
+        ? Math.round((totalCorrect / totalQ) * 100)
+        : 0;
 
-    const filteredGames =
-        filter === "All"
-            ? games
-            : games.filter((g) => g.difficulty === filter);
-
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-200 text-center">
-                    <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-gray-600 text-sm">Loading dashboard...</p>
-                </div>
-            </div>
-        );
+      setStats({ gamesPlayed, highScore, accuracy });
+    } catch (err) {
+      console.log(err.message);
     }
+  };
 
-    return (
-        <main className="min-h-screen bg-gray-50 px-6 py-8">
-            <section className="mx-auto max-w-7xl bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+  const filtered =
+    filter === "All" ? games : games.filter((g) => g.difficulty === filter);
 
-                <header className="mb-8 flex items-center justify-between">
-                    <div>
-                        <h1 className="text-3xl font-semibold text-gray-900 flex items-center gap-2">
-                            🎮 Learning Games
-                        </h1>
-                        <p className="mt-1 text-gray-500 text-sm">
-                            Make learning fun with interactive concept-based games
-                        </p>
-                    </div>
+  return (
+    <div
+      style={{
+        background: `linear-gradient(135deg, ${colour}20, ${colour}08, #ffffff)`
+      }}
+      className="min-h-screen p-6 md:p-10 transition-all duration-500 ease-in-out"
+    >
 
-                    <button
-                        onClick={handleLogout}
-                        className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition"
-                    >
-                        Logout
-                    </button>
-                </header>
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-semibold tracking-tight text-gray-900 flex items-center gap-2">
+          🎮 Learning Games
+        </h1>
+        <p className="text-gray-500 mt-1 text-sm">
+          Make learning fun with interactive concept-based games
+        </p>
+      </div>
 
-                {stats && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        <StatCard title="Games Played" value={stats.gamesPlayed} />
-                        <StatCard title="High Score" value={stats.highScore} />
-                        <StatCard title="Accuracy" value={`${stats.accuracy}%`} />
-                        <StatCard title="Avg Score" value={`${stats.avgScore}%`} />
-                    </div>
-                )}
+      {/* Stats */}
+{stats && (
+  <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
+    
+    <div
+      style={{
+        background: `linear-gradient(135deg, ${colour}20, #ffffff)`,
+        borderColor: `${colour}30`
+      }}
+      className="backdrop-blur-xl border shadow-md rounded-xl p-5 hover:shadow-lg transition"
+    >
+      <StatCard title="Games Played" value={stats.gamesPlayed} />
+    </div>
 
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-                    <h2 className="text-lg font-semibold text-gray-800">
-                        Available Games
-                    </h2>
+    <div
+      style={{
+        background: `linear-gradient(135deg, ${colour}20, #ffffff)`,
+        borderColor: `${colour}30`
+      }}
+      className="backdrop-blur-xl border shadow-md rounded-xl p-5 hover:shadow-lg transition"
+    >
+      <StatCard title="High Score" value={stats.highScore} />
+    </div>
 
-                    <div className="bg-gray-100 p-1 rounded-xl flex gap-2 w-fit">
-                        <FilterBar filter={filter} setFilter={setFilter} />
-                    </div>
-                </div>
+    <div
+      style={{
+        background: `linear-gradient(135deg, ${colour}20, #ffffff)`,
+        borderColor: `${colour}30`
+      }}
+      className="backdrop-blur-xl border shadow-md rounded-xl p-5 hover:shadow-lg transition"
+    >
+      <StatCard title="Accuracy" value={`${stats.accuracy}%`} />
+    </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredGames.map((game) => (
-                        <GameCard key={game._id} game={game} />
-                    ))}
-                </div>
+    <div
+      style={{
+        background: `linear-gradient(135deg, ${colour}20, #ffffff)`,
+        borderColor: `${colour}30`
+      }}
+      className="backdrop-blur-xl border shadow-md rounded-xl p-5 hover:shadow-lg transition"
+    >
+      <StatCard title="Stars Earned" value="67" />
+    </div>
 
-                {filteredGames.length === 0 && (
-                    <div className="rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-500 bg-gray-50 mt-6">
-                        No games found for the selected filter.
-                    </div>
-                )}
-            </section>
-        </main>
-    );
-};
+  </div>
+)}
 
-export default Dashboard;
+      {/* Filter */}
+<div className="flex justify-between items-center mb-6">
+  <h2 className="text-lg font-semibold text-gray-800">
+    Available Games
+  </h2>
+
+  <div className="flex items-center">
+    <FilterBar filter={filter} setFilter={setFilter} />
+  </div>
+</div>
+
+      {/* Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+        {filtered.map((game) => (
+          <div
+            key={game._id}
+            className="group bg-white/80 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+          >
+            <GameCard game={game} />
+          </div>
+        ))}
+      </div>
+
+    </div>
+  );
+}
+
+export default GamesDashboard;
