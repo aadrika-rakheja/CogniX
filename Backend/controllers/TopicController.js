@@ -1,125 +1,78 @@
-const Topic = require("../models/Topic");
+const Topics=require("../models/Topics");
 
-// ✅ ADD TOPIC (ADMIN)
-const addTopic = async (req, res) => {
-  try {
-    const { name, title, description } = req.body;
 
-    if (!name || !title) {
-      return res.status(400).json({
-        success: false,
-        message: "Name and title are required",
-      });
+
+const createTopic=async(req , res)=>{
+    try{
+        const data=req.body;
+        const top=new Topics(data);
+        await top.save();
+        res.status(201).json({
+            msg:"Topic added successfully"
+        });
+    }catch(e){
+        console.log(e.messsage);
+        res.status(400).json({
+            msg:"Unable to add topic",
+            error:e.messsage
+        });
     }
+}
 
-    const existingTopic = await Topic.findOne({ name: name.toLowerCase() });
-    if (existingTopic) {
-      return res.status(400).json({
-        success: false,
-        message: "Topic with this name already exists",
-      });
+const getTopics=async(req,res)=>{
+    try{
+        const data=await Topics.find();
+        res.json(data);
+    }catch(err){
+        res.json({
+            fail:"Unable to fetch topics",
+            meassage:err.messsage
+        });
     }
+}
 
-    const newTopic = await Topic.create({
-      name: name.toLowerCase(),
-      title,
-      description,
-    });
 
-    res.status(201).json({
-      success: true,
-      message: "Topic added",
-      data: newTopic,
-    });
-
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      success: false,
-      message: "Error adding topic",
-    });
-  }
-};
-
-// ✅ GET ALL TOPICS
-const getAllTopics = async (req, res) => {
-  try {
-    const topics = await Topic.find().sort({ createdAt: -1 });
-
-    res.status(200).json({
-      success: true,
-      topics,
-    });
-
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      success: false,
-      message: "Error fetching topics",
-    });
-  }
-};
-
-// ✅ UPDATE TOPIC (ADMIN)
-const updateTopic = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, title, description } = req.body;
-
-    const updatedTopic = await Topic.findByIdAndUpdate(
-      id,
-      { name: name.toLowerCase(), title, description },
-      { new: true }
-    );
-
-    if (!updatedTopic) {
-      return res.status(404).json({
-        success: false,
-        message: "Topic not found",
-      });
+const getAllTopicsBySubj=async(req,res)=>{
+    try{
+        const subj=req.params.id;
+        const data=await Topics.find({subjName:subj});
+        res.json(data);
     }
-
-    res.status(200).json({
-      success: true,
-      message: "Topic updated",
-      data: updatedTopic,
-    });
-
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      success: false,
-      message: "Error updating topic",
-    });
-  }
-};
-
-// ✅ DELETE TOPIC (ADMIN)
-const deleteTopic = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const deletedTopic = await Topic.findByIdAndDelete(id);
-
-    if (!deletedTopic) {
-      return res.status(404).json({
-        success: false,
-        message: "Topic not found",
-      });
+    catch (err)
+    {
+        console.log(err);
+        res.json({
+            fail:"Unable to fetch topics",
+            meassage:err.messsage
+        })
     }
+}
 
-    res.status(200).json({
-      success: true,
-      message: "Topic deleted",
-    });
+const getTopicsById=async(req,res)=>{
+    try{
+        const tid=req.params.tid;
+        const data=await Topics.find({_id:tid});
+        res.json(data);
+    }catch(err){
+        res.json({
+            fail:"Unable to fetch topic by its id",
+            meassage:err.messsage
+        });
+    }
+}
 
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      success: false,
-      message: "Error deleting topic",
-    });
-  }
-};
+const deleteTopic=async(req,res)=>{
+    try{
+        const t_id=req.params.tid;
+        await Topics.findByIdAndDelete(t_id);
+        res.status(200).json({
+            msg:"Topic deleted successfully"
+        })
+    }catch(err){
+        res.status(400).json({
+            msg:"Unable to delete topic"
+        })
+    }
+}
 
-module.exports = { addTopic, getAllTopics, updateTopic, deleteTopic };
+module.exports={createTopic,getAllTopicsBySubj,getTopics,getTopicsById,deleteTopic};
