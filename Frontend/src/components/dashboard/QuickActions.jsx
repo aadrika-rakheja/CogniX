@@ -14,8 +14,8 @@ function QuickActions() {
 
         <div className="flex flex-col gap-3 btns" style={{'--moodcolour': colour}}>
             <button ><Link to="/ai-tut" >💭 Ask AI Tutor</Link></button>
-            <button >🎮 Play Learning Game</button>
-            <button >❓ Raise a Doubt</button>
+            <button ><Link to="/games">🎮 Play Learning Game</Link></button>
+            <button ><Link to="/forum">❓ Raise a Doubt</Link></button>
         </div></div>
 
     </div>
