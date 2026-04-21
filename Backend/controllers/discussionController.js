@@ -1,6 +1,6 @@
 const Discussion = require("../models/Discussion");
 const Notification = require("../models/Notification");
-const User = require("../models/User");
+const User = require("../models/user");
 
 
 // ================= GET ALL =================

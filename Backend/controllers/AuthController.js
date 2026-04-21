@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const User = require("../models/User"); // ✅ FIX: capital U (match file name)
+const User = require("../models/user"); // ✅ FIX: capital U (match file name)
 
 
 // ✅ SIGNUP
