@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 
 import TopicSelector from "../components/Admin/TopicSelector";
-import QuestionForm from "../components/admin/QuestionForm";
+import QuestionForm from "../components/Admin/QuestionForm";
 import QuestionList from "../components/Admin/QuestionList";
 import sampleQuestions from "../data/sampleQuestions";
 import { useTheme } from "../context/ThemeContext";
