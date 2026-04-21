@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL="http://localhost:2424/ai-tut";
+const API_URL="https://cognix-v9mv.onrender.com/ai-tut";
 
 export const callGenAi=async({message,subj,topic,mood})=>{
     try{

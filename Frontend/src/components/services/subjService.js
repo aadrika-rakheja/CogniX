@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL="http://localhost:2424/Subjects";
+const API_URL="https://cognix-v9mv.onrender.com/Subjects";
 
 export const getAllSubjects= async()=>{
     const response=await axios.get(`${API_URL}/getAllSubjects`);

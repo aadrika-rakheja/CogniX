@@ -1,7 +1,7 @@
 import axios from "axios"
 import { getAuthHeader } from "../../utils/authUtils";
 
-const API_URL="http://localhost:2424/userProgress";
+const API_URL="https://cognix-v9mv.onrender.com/userProgress";
 
 export const getUserProgress=async()=>{
     const userProgress=await axios.get(`${API_URL}/`, {

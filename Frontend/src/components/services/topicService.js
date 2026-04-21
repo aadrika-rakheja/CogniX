@@ -1,7 +1,7 @@
 import  axios  from "axios";
 
 
-const API_URL="http://localhost:2424/topics";
+const API_URL="https://cognix-v9mv.onrender.com/topics";
 
 export const getTopicsSubjwise=async(id)=>{
     const res=await axios.get(`${API_URL}/${id}`);
