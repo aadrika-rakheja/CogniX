@@ -45,7 +45,7 @@ function VideoPage() {
         const currentTime=playRef.current.getCurrentTime();
         const isCompleted = currentTime >= playRef.current.getDuration() * 0.9;
         navigator.sendBeacon(
-          'http://localhost:2424/userProgress/updateUserProgress', 
+          'https://cognix-v9mv.onrender.com/userProgress/updateUserProgress', 
           JSON.stringify({ 
             course_id: passedSubject._id,
             topic_id: tid,

@@ -25,7 +25,7 @@ function GamesDashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.get("http://localhost:2424/api/progress", {
+      const res = await axios.get("https://cognix-v9mv.onrender.com/api/progress", {
         headers: { Authorization: `Bearer ${token}` },
       });
 

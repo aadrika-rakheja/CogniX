@@ -33,14 +33,14 @@ const AdminPanel = () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `http://localhost:2424/api/questions/${topic}`
+        `https://cognix-v9mv.onrender.com/api/questions/${topic}`
       );
       setQuestions(res.data.questions || []);
 
       if (!res.data.questions || res.data.questions.length === 0) {
         await addSampleQuestionsForTopic(topic);
         const updatedRes = await axios.get(
-          `http://localhost:2424/api/questions/${topic}`
+          `https://cognix-v9mv.onrender.com/api/questions/${topic}`
         );
         setQuestions(updatedRes.data.questions || []);
       }
@@ -59,7 +59,7 @@ const AdminPanel = () => {
     try {
       for (const question of topicQuestions) {
         await axios.post(
-          `http://localhost:2424/api/questions`,
+          `https://cognix-v9mv.onrender.com/api/questions`,
           question,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -83,13 +83,13 @@ const AdminPanel = () => {
 
     if (editingId) {
       await axios.put(
-        `http://localhost:2424/api/questions/${editingId}`,
+        `https://cognix-v9mv.onrender.com/api/questions/${editingId}`,
         { ...form, topic },
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } else {
       await axios.post(
-        `http://localhost:2424/api/questions`,
+        `https://cognix-v9mv.onrender.com/api/questions`,
         { ...form, topic },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -107,7 +107,7 @@ const AdminPanel = () => {
 
   const handleDelete = async (id) => {
     await axios.delete(
-      `http://localhost:2424/api/questions/${id}`,
+      `https://cognix-v9mv.onrender.com/api/questions/${id}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     fetchQuestions();

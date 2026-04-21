@@ -12,7 +12,7 @@ const addSampleQuestions = async () => {
   try {
     for (const question of sampleQuestions) {
       const response = await axios.post(
-        'http://localhost:2424/api/questions',
+        'https://cognix-v9mv.onrender.com/api/questions',
         question,
         {
           headers: {

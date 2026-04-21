@@ -43,7 +43,7 @@ function QuizGame() {
         const fetchQuestions = async () => {
             try {
                 const res = await axios.get(
-                    `http://localhost:2424/api/questions/${topic}`,
+                    `https://cognix-v9mv.onrender.com/api/questions/${topic}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -68,7 +68,7 @@ function QuizGame() {
             const token = localStorage.getItem("token");
 
             await axios.post(
-                "http://localhost:2424/api/progress",
+                "https://cognix-v9mv.onrender.com/api/progress",
                 {
                     topic,
                     score,

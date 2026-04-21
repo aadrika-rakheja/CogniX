@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:2424/api/discussions";
+const API_URL = "https://cognix-v9mv.onrender.com/api/discussions";
 
 export const getDiscussions = async () => {
   const res = await fetch(API_URL);

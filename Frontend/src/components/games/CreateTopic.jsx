@@ -16,7 +16,7 @@ const CreateTopic = () => {
   // ✅ FETCH TOPICS
   const fetchTopics = async () => {
     try {
-      const res = await axios.get("http://localhost:2424/api/topics");
+      const res = await axios.get("https://cognix-v9mv.onrender.com/api/topics");
       setTopics(res.data.topics || res.data);
     } catch (err) {
       console.error(err);
@@ -45,7 +45,7 @@ const CreateTopic = () => {
 
     try {
       await axios.post(
-        "http://localhost:2424/api/topics",
+        "https://cognix-v9mv.onrender.com/api/topics",
         form,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -73,7 +73,7 @@ const CreateTopic = () => {
 
     try {
       await axios.delete(
-        `http://localhost:2424/api/topics/${id}`,
+        `https://cognix-v9mv.onrender.com/api/topics/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

@@ -1,4 +1,4 @@
-const API = "http://localhost:2424/api/notifications";
+const API = "https://cognix-v9mv.onrender.com/api/notifications";
 
 export const getNotifications = async (userId, username, email) => {
   const queryParts = [];

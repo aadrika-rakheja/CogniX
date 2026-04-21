@@ -45,7 +45,7 @@ function GameCard({ game }) {
 
         try {
             const response = await fetch(
-                `http://localhost:2424/api/questions/${topic}`
+                `https://cognix-v9mv.onrender.com/api/questions/${topic}`
             );
 
             const data = await response.json();

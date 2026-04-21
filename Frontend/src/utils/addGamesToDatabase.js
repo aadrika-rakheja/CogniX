@@ -29,7 +29,7 @@ const addGamesToDatabase = async () => {
       };
 
       const response = await axios.post(
-        'http://localhost:2424/api/games',
+        'https://cognix-v9mv.onrender.com/api/games',
         gameData,
         {
           headers: {

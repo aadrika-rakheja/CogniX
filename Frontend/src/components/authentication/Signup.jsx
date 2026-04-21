@@ -20,7 +20,7 @@ function Signup() {
         }
 
         try {
-          const res = await fetch("http://localhost:2424/api/auth/signup", {
+          const res = await fetch("https://cognix-v9mv.onrender.com/api/auth/signup", {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
