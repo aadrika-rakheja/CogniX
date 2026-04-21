@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { createDiscussion } from "../services/discussionServices";
+import { useTheme } from "../context/ThemeContext";
 
 const AVAILABLE_TAGS = [
   "Algorithms",
@@ -12,6 +13,7 @@ const AVAILABLE_TAGS = [
 
 function NewDiscussion({ refreshDiscussions }) {
   const navigate = useNavigate();
+  const {colour}=useTheme();
 
   // State
   const [title, setTitle] = useState("");
@@ -142,7 +144,8 @@ function NewDiscussion({ refreshDiscussions }) {
         {/* Submit */}
         <button
           type="submit"
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg transition"
+          style={{ backgroundColor: colour, color: "white" }}
+           className="px-5 py-2 rounded-xl font-medium transition"
         >
           Post Discussion
         </button>

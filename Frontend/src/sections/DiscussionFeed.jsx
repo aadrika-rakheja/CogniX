@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import DiscussionCard from "../components/DiscussionCard";
 import SearchBar from "../components/SearchBar";
+import { useTheme } from "../context/ThemeContext";
 
 function DiscussionFeed({ discussions, setDiscussions, onDelete, onUpvote, searchQuery,
   setSearchQuery}) {
   const navigate = useNavigate();
+  const  {colour}=useTheme();
 
   console.log("Feed data:", discussions);
   console.log("onDelete:", onDelete);
@@ -24,7 +26,8 @@ function DiscussionFeed({ discussions, setDiscussions, onDelete, onUpvote, searc
         {/* New Discussion Button */}
         <button
           onClick={() => navigate("/new-discussion")}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-medium transition"
+          style={{ backgroundColor: colour, color: "white" }}
+           className="px-5 py-2 rounded-xl font-medium transition"
         >
           + New Discussion
         </button>

@@ -1,3 +1,5 @@
+import { useTheme } from "../context/ThemeContext";
+
 const TAGS = [
   "All",
   "Algorithms",
@@ -7,6 +9,7 @@ const TAGS = [
 ];
 
 function FilterSidebar({ selectedTag, setSelectedTag }) {
+  const {colour}=useTheme();
   return (
     <div className="bg-white p-5 rounded-xl shadow-sm">
 
@@ -20,10 +23,14 @@ function FilterSidebar({ selectedTag, setSelectedTag }) {
           <button
             key={index}
             onClick={() => setSelectedTag(tag)}
+             style={
+                selectedTag === tag
+                  ? { backgroundColor: colour, color: "white" }
+                  : {}
+              }
             className={`w-full text-left px-3 py-2 rounded-lg transition ${
               selectedTag === tag
-                ? "bg-indigo-500 text-white"
-                : "hover:bg-gray-100"
+              ?"": "hover:bg-gray-100"
             }`}
           >
             {tag}
