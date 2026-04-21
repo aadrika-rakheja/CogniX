@@ -6,7 +6,7 @@ import ProgressDashboard from "./pages/ProgressDashboard";
 import AItutor from "./components/ai-tutor/AItutor";
 import DisplayTopics from "./components/dashboard/topics/DisplayTopics";
 import AdminPage from "./components/admin/AdminPage";
-import VideoPage from "./components/dashboard/topics/videoPage";
+import VideoPage from "./components/dashboard/topics/VideoPage";
 import GamesDashboard from "./components/games/GamesDashboard";
 import Login from "./components/authentication/Login";
 import Signup from "./components/authentication/Signup";
