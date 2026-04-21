@@ -1,6 +1,6 @@
 import {useState,useEffect} from 'react'
 import CreateSubj from './CreateSubj'
-import CreateTopic from './createTopic'
+import CreateTopic from './CreateTopic'
 import DeleteSubject from './DeleteSubject'
 import DeleteTopic from './DeleteTopic'
 import { getAllSubjects } from '../services/subjService';
