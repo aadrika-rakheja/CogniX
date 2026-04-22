@@ -6,10 +6,10 @@ const User = require("../models/user"); // ✅ FIX: capital U (match file name)
 // ✅ SIGNUP
 const signupUser = async (req, res) => {
   try {
-    let { email, password, role } = req.body;
+    let { name,email, password, role } = req.body;
 
     // ✅ Validation
-    if (!email || !password) {
+    if (!email || !password || !name) {
       return res.status(400).json({
         success: false,
         message: "Email and password are required",
@@ -30,6 +30,7 @@ const signupUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
+      name,
       email,
       password: hashedPassword,
       role: role || "user",
@@ -50,7 +51,7 @@ const signupUser = async (req, res) => {
 
     res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: error.message,
       error: error.message,
     });
   }

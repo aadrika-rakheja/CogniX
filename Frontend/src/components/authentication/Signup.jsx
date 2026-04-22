@@ -26,7 +26,7 @@ function Signup() {
               "Content-Type": "application/json"
             },
             body: JSON.stringify({
-              fullname: Fullname, // ✅ FIXED (was missing)
+              name: Fullname, // ✅ FIXED (was missing)
               email: Email,
               password: Password
             })
